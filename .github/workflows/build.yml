@@ -1,0 +1,25 @@
+name: Build APK
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - name: Generate Android folder
+        run: |
+          flutter create . --project-name uzz_store_manajer --org com.uzz.store --platforms android
+          flutter pub get
+      - name: Build APK
+        run: flutter build apk --release
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: uzz-store-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
